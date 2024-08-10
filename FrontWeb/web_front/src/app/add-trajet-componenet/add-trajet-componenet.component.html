@@ -1,0 +1,279 @@
+<app-section-drapeau-component [logoUrl]="logoUrl" [welcomeMessage]="welcomeMessage" [subtitle]="subtitle"
+  [drpTunisiaUrl]="drpTunisiaUrl">
+</app-section-drapeau-component>
+
+<div class="header mt-5 py-1">
+  <div class="line"></div>
+  <div class="text">زيد ثنيتك</div>
+  <div class="line"></div>
+</div>
+
+<div *ngIf="trajet.length>0" class="text-center mt-4 check">
+  عندك ثنيتك شوفها منا
+  <br>
+  <button mat-fab class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#infoTrjaet">
+    <mat-icon>info</mat-icon>
+  </button>
+</div>
+
+<div class="modal fade" id="infoTrjaet" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="infoTrjaetLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="infoTrjaetLabel">ثنيتك</h3>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-6 list_demandes text-center scroll">
+            <div>
+              <button class="btn btn-outline-primary mx-2 mb-2" (click)="AccptedRequest=false">تحب تشوف طلبات</button>
+              <button class="btn btn-outline-primary" (click)="AccptedRequest=true">تحب تشوف المقبولين</button>
+            </div>
+            <div class="row" *ngIf="AccptedRequest else pending">
+              <p class="text-danger mt-1">
+                لعباد إلي معاك في الثنية
+              </p>
+              <div *ngIf="RequestAccpted.length==0 else showRequestAccpted">
+                <p class="py-5">مازال متقبل حد </p>
+              </div>
+              <ng-template #showRequestAccpted>
+                <div *ngFor="let item of RequestAccpted" class="col-lg-6">
+                  <div class="card">
+                    <div class="card-body">
+                      <h3 class="card-title">{{ item.user.name }}</h3>
+                      <p class="card-text">تلفون : {{ item.user.phone }}</p>
+                      <p *ngIf="item.user.LinkFacebook!=null" class="card-text">
+                        <a [href]="item.user.LinkFacebook">بروفيل فيسبوك</a>
+                      </p>
+                      <p  class="card-text">
+                        {{ item.nbplaces }}
+                      </p>
+                      <div>
+                        <button class="btn btn-danger" (click)="RejectUser(item.user.id)" >نفسخ</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </div>
+            <ng-template #pending>
+              <p class="mt-1">لعباد إلي تحب تطلع معاك
+              </p>
+              <p class="text-danger">
+                !قبل ما تقبل واحد كلموا باش تتأكد
+              </p>
+              <div class="row">
+                <div *ngIf="Requests.length==0 else showRequestPending">
+                  <p class="py-5">مازال مطلب حتى واحد </p>
+                </div>
+                <ng-template #showRequestPending>
+                  <div *ngFor="let item of Requests" class="col-lg-6">
+                    <div class="card">
+                      <div class="card-body">
+                        <h3 class="card-title">{{ item.user.name }}</h3>
+                        <p class="card-text">تلفون : {{ item.user.phone }}</p>
+                        <p *ngIf="item.user.LinkFacebook!=null" class="card-text">
+                          <a [href]="item.user.LinkFacebook">بروفيل فيسبوك</a>
+                        </p>
+                        <p  class="card-text">
+                          بلايص :{{ item.nbplaces }} 
+                        </p>
+                        <div>
+                          <button class="btn btn-success mx-2" type="button"
+                            (click)="AcceptedUser(item.user.id,item.nbplaces)">نقبل</button>
+                          <button class="btn btn-danger" type="button" (click)="RejectUser(item.user.id)">نرفض</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </div>
+            </ng-template>
+          </div>
+          <div class="col-lg-6">
+            <div class="card box_card p-3 mb-2">
+              <div class="d-flex justify-content-between" *ngIf="user['trajet'] && user['trajet'].length > 0">
+                <div class="d-flex flex-row align-items-center">
+                  <div class="ms-2 c-details p-2 mt-3">
+                    <h4 class="mb-0">{{ user['name'] }}</h4>
+                    <small> {{ user['trajet'][0]['created_at'] | timeAgo}} </small>
+                  </div>
+                </div>
+                <div class="badge" *ngIf="trajet[0]['nbplaces']!=trajet[0]['nbplacesCurrent'];else vide"> <span
+                    style=" background-color: #fffbec;color: #fed85d;">مزال فارغ</span> </div>
+                <ng-template #vide>
+                  <div class="badge"> <span
+                      style=" background-color: rgb(248, 185, 185);color: red;padding:12px">تعبت</span> </div>
+                </ng-template>
+              </div>
+              <div class="mt-5" *ngIf="user['trajet'] && user['trajet'].length > 0">
+                <div class="heading">
+                  <p class="destination">
+                    {{ trajet[0]['depart'].split(' ')[1] }}
+                  </p>
+                  <p class="line"></p>
+                  <p class="time">
+                    {{ trajet[0]['date'] }}
+                  </p>
+                  <p class="line"></p>
+                  <p class="departure">
+                    {{ trajet[0]['arrivee'].split(' ')[1] }}
+                  </p>
+                </div>
+                <div class="mt-5">
+                  <div class="progress">
+                    <div class="progress-bar" role="progressbar" [ngStyle]="{width: percentage + '%' }"
+                      attr.aria-valuenow="{{ percentage }}" aria-valuemin="0"
+                      attr.aria-valuemax="{{ trajet[0]['nbplaces'] }}"></div>
+                  </div>
+                  <div class="mt-3"> <span class="text1">{{ trajet[0]['nbplacesCurrent'] }} بلايص <span class="text2">
+                        من {{ trajet[0]['nbplaces'] }} بلايص </span></span> </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">باهي</button>
+        <button type="button" class="btn btn-danger" (click)="DeleteTrajet(trajet[0]['id'])" data-bs-dismiss="modal">نحب
+          نفسخ ثنيتي</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container d-flex justify-content-center" data-aos="fade-left">
+  <form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+        <div  data-background="color" data-color="blue" data-radius="none">
+          <div class="shadow-lg rounded p-3">
+            <h6 class="text-center">عمر لينا شوي معلومات</h6>
+            <div class="mt-3 py-3 box_search row text-center">
+              <div class="col-lg-6">
+                <div>
+                  <mat-form-field>
+                    <mat-label>منين بش تخرج</mat-label>
+                    <select matNativeControl formControlName="depart" (change)="choseDepart($event)">
+                      <optgroup *ngFor="let arr of tab" class="text-danger" [label]="arr.Name">
+                        <option *ngFor="let del of arr.Delegations" class="text-dark" [value]="del.Name">{{ del.Name }}
+                        </option>
+                      </optgroup>
+                    </select>
+                  </mat-form-field>
+                </div>
+                <div>
+                  <mat-form-field>
+                    <mat-label>وين ماشي</mat-label>
+                    <select matNativeControl formControlName="destination" (change)="choseDestination($event)">
+                      <optgroup *ngFor="let arr of tab" class="text-danger" [label]="arr.Name">
+                        <option *ngFor="let del of arr.Delegations" class="text-dark" [value]="del.Name">{{ del.Name }}
+                        </option>
+                      </optgroup>
+                    </select>
+                  </mat-form-field>
+                </div>
+                <div class="mb-2">
+                  <mat-form-field>
+                    <mat-label>وقتاش</mat-label>
+                    <input matInput [matDatepicker]="picker" formControlName="date">
+                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+                  <div *ngIf="searchForm.get('date')?.hasError('dateRange')" class="text-danger">
+                    الرجاء اختيار تاريخ بين اليوم و ثلاثة أيام من الآن
+                  </div>
+                </div>
+                <div>
+                  <label>أعطينا الوقت بظبط</label>
+                  <input type="time" class="time_input" formControlName="time">
+                </div>
+                <div class="mt-2">
+                  <mat-form-field appearance="fill">
+                    <mat-label>قداش عندك من بلاصة فارغة</mat-label>
+                    <input type="number" matInput max="4" min="1" placeholder="قداش من واحد" formControlName="seats">
+                    <mat-icon matSuffix>group</mat-icon>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="col-lg-6 text-center all_radios">
+                <p class="text-center text_header">زيدنا إقلقك ولا عادي بش ميصيرش سوء تفاهم</p>
+                <div>
+                  <div class="d-flex align-items-center justify-content-center gap-2">
+                    <div class="label_radio">حيوانات</div>
+                    <mat-radio-group aria-label="Select an option" formControlName="animals">
+                      <mat-radio-button value="1">عادي</mat-radio-button>
+                      <mat-radio-button value="0">منحبش</mat-radio-button>
+                    </mat-radio-group>
+                  </div>
+                </div>
+                <div>
+                  <div class="d-flex align-items-center justify-content-center gap-2">
+                    <div class="label_radio"> يتكيف</div>
+                    <mat-radio-group aria-label="Select an option" formControlName="smoking">
+                      <mat-radio-button value="1">عادي</mat-radio-button>
+                      <mat-radio-button value="0">منحبش</mat-radio-button>
+                    </mat-radio-group>
+                  </div>
+                </div>
+                <div>
+                  <div class="d-flex align-items-center justify-content-center gap-2">
+                    <div class="label_radio">إيشرجي</div>
+                    <mat-radio-group aria-label="Select an option" formControlName="charging">
+                      <mat-radio-button value="1">عادي</mat-radio-button>
+                      <mat-radio-button value="0">منحبش</mat-radio-button>
+                    </mat-radio-group>
+                  </div>
+                </div>
+                <div>
+                  <div class="d-flex align-items-center justify-content-center gap-2">
+                    <div class="label_radio">كليماتيزور</div>
+                    <mat-radio-group aria-label="Select an option" formControlName="airConditioning">
+                      <mat-radio-button value="1">عادي</mat-radio-button>
+                      <mat-radio-button value="0">منحبش</mat-radio-button>
+                    </mat-radio-group>
+                  </div>
+                </div>
+              </div>
+              <div class="text-center" *ngIf="isAuth;else afficheSignup">
+                <button mat-fab extended class="bg-danger" type="submit">
+                  زيد ثنيتك
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
+              <ng-template #afficheSignup>
+                <div class="mt-2">
+                  <button class="btn btn-danger text-center" type="button" data-bs-toggle="modal"
+                    data-bs-target="#exampleModal">
+                    شكون أنت باش تزيد ثنيتك
+                  </button>
+                </div>
+              </ng-template>
+            </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">مرحبا</h5>
+      </div>
+      <div class="modal-body">
+        <div class="text-center container">
+          <input type="text" class="form-control mb-2" placeholder="إسمك" name="name" [(ngModel)]="name">
+          <input type="number" class="form-control mb-2" placeholder="نومروك" name="tlf" [(ngModel)]="tlf">
+          <input type="text" class="form-control mb-2" placeholder="كان تحب تحط بروفيل فيسبوك متاعك"
+            name="profilefacebook" [(ngModel)]="profilefacebook">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">تحب تخرج</button>
+        <button type="button" class="btn btn-primary" (click)="RegisterUser()">متأكد</button>
+      </div>
+    </div>
+  </div>
+</div>

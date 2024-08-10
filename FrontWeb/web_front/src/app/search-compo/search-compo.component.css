@@ -1,0 +1,103 @@
+.line{
+    border:1px solid #818080;
+    width: 20%;
+}
+
+.header{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap:15px;
+  padding: 15px;
+}
+
+.text{
+  font-size: 1.5em;
+  background-color: whitesmoke;
+  border-radius: 25px;
+  padding: 15px;
+  animation: animate 1s infinite;
+}
+
+@media screen and (max-width: 768px) {
+  .text {
+    font-size: 1.3em;
+  }
+  
+}
+
+@keyframes animate {
+  0%{
+    transform: scale(1);
+  }
+  50%{
+    transform: scale(1.1);
+  }
+  100%{
+    transform: scale(1);
+  }
+}
+
+.card-big-shadow {
+    max-width: 320px;
+    display:flex;
+    position: relative;
+}
+
+.coloured-cards .card {
+    margin-top: 30px;
+}
+
+.card[data-radius="none"] {
+    border-radius: 0px;
+}
+
+.card {
+    border-radius: 8px;
+    box-shadow: 0 2px 2px rgba(204, 197, 185, 0.5);
+    background-color: #FFFFFF;
+    color: #252422;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.card.card-just-text .content {
+    padding: 50px 65px;
+}
+
+.card-big-shadow:before {
+    background-image: url("http://static.tumblr.com/i21wc39/coTmrkw40/shadow.png");
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    background-size: 80% 80%;
+    bottom: -8%;
+    content: "";
+    display: block;
+    left: -8%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 0;
+}
+
+.content-card{
+    margin-top:30px;
+}
+
+.card[data-color="blue"] {
+    background: whitesmoke;
+    border-radius: 12px;
+}
+
+h6 {
+  font-size: 1.2em;
+  text-align: center;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.input_last{
+  margin-right: -19px;
+  position: relative;
+}

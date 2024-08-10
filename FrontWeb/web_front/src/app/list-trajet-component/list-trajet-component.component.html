@@ -1,0 +1,413 @@
+<app-section-drapeau-component [logoUrl]="logoUrl" [welcomeMessage]="welcomeMessage" [subtitle]="subtitle"
+  [drpTunisiaUrl]="drpTunisiaUrl">
+</app-section-drapeau-component>
+
+<div class="container">
+  <div class="card shadow rounded mt-2">
+    <div class="large_card card-body d-flex justify-content-center gap-2 mt-2">
+      <div>
+        <mat-form-field>
+          <mat-label>منين بش تخرج</mat-label>
+          <select matNativeControl (change)="choseDepart($event)">
+            <optgroup *ngFor="let arr of tab" class="text-danger" [label]="arr.Name">
+              <option *ngFor="let del of arr.Delegations" class="text-dark" [value]="del.Name">{{ del.Name }}
+              </option>
+            </optgroup>
+          </select>
+        </mat-form-field>
+        <br>
+        <small>{{ depart.governorate + " " + depart.delegation }}</small>
+      </div>
+      <div>
+        <mat-form-field>
+          <mat-label>وين ماشي</mat-label>
+          <select matNativeControl (change)="choseDestination($event)">
+            <optgroup *ngFor="let arr of tab" class="text-danger" [label]="arr.Name">
+              <option *ngFor="let del of arr.Delegations" class="text-dark" [value]="del.Name">{{ del.Name
+                }}</option>
+            </optgroup>
+          </select>
+        </mat-form-field>
+        <br>
+        <small>{{ destination.governorate + " "+ destination.delegation }}</small>
+      </div>
+      <div class="input_last">
+        <mat-form-field>
+          <mat-label>وقتاش</mat-label>
+          <input matInput [matDatepicker]="picker2" [(ngModel)]="date_chose">
+          <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+          <mat-datepicker #picker2></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="input_last">
+        <mat-form-field appearance="fill">
+          <mat-label>معاك شكون ولا وحدك</mat-label>
+          <input type="number" matInput placeholder="قداش من واحد" max="4" min="1" [(ngModel)]="Nbr">
+          <mat-icon matSuffix>group</mat-icon>
+        </mat-form-field>
+      </div>
+      <div class="text-center">
+        <button mat-fab extended class="bg-danger" (click)="SearchForTrajet()">
+          لوج على توصيلة
+          <mat-icon>search</mat-icon>
+        </button>
+      </div>
+    </div>
+    <div class="samll_card card-body gap-2 mt-2" data-bs-toggle="offcanvas" data-bs-target="#offcanvasTop"
+      aria-controls="offcanvasTop">
+      <div class="row text-center">
+        <div class="col-lg-6 card shadow-lg p-2">
+          <p class="text_des">
+            {{ depart.governorate + " " + (depart.delegation) }} -> {{ destination.governorate + " " +
+            (destination.delegation) }}
+          </p>
+          <p class="text_des">
+            {{ val.date_chose ? val.date_chose.split('T')[0] : 'Invalid date' }}
+          </p>
+          <p class="text_des"> {{ Nbr }} بلايص </p>
+        </div>
+
+        <div class="col-lg-6 py-3">
+          <button data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight" mat-fab
+            extended class="bg-danger" routerLink="/ListTrajet">
+            تحب تدلل على توصيلة
+            <mat-icon>search</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="mt-2 py-2 p-3 m-4 ">
+  <div class="container-fluid rounded p-2 m-2 shadow-sm section_trier">
+    <div class="d-flex justify-content-center gap-4 p-3">
+      <div class="col-lg-7">
+        <div class="card shadow-lg">
+          <div class="p-3 d-flex align-items-center justify-content-center gap-1">
+            <mat-icon>directions_car</mat-icon>
+            <p class="mt-3">بلايص الموجودة
+              <span class="badge bg-dark p-2">{{ trajets.length }}</span>
+            </p>
+          </div>
+        </div>
+        <div class="mt-4 py-3">
+          <div>
+            <div *ngIf="trajets.length==0 else ExisteTrajet" class="text-center">
+              <div *ngIf="isAuth else ExisteAuth">
+                <button [disabled]="user?.trajet?.length > 0"  class="btn btn-outline-dark mt-5" (click)="CreateAlert()">
+                  😉 تحب نعلموك وقت تبدى موجودة
+                </button>
+              </div>
+              <ng-template #ExisteAuth>
+                <button class="btn btn-outline-danger mt-5" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                  شكون إنت ساعة 😁
+                </button>
+              </ng-template>
+            </div>
+            <ng-template #ExisteTrajet>
+              <div *ngFor="let trajet of trajets; let i = index" class="card box_card p-3 mb-2"
+                [style]="trajet.nbplaces == trajet.nbplacesCurrent ? 'cursor: not-allowed;opacity:0.7' : ''">
+                <div class="d-flex justify-content-between">
+                  <div class="d-flex flex-row align-items-center">
+                    <div class="ms-2 c-details p-2 mt-3">
+                      <span class="mb-0">{{ trajet.user.name }}</span>
+                      <h6> {{ trajet.created_at | timeAgo }} </h6>
+                    </div>
+                  </div>
+                  <div class="badge" *ngIf="trajet.nbplaces != trajet.nbplacesCurrent; else vide">
+                    <span style="background-color: #fffbec; color: #fed85d;">مزال فارغ</span>
+                  </div>
+                  <ng-template #vide>
+                    <div class="badge">
+                      <span style="background-color: rgb(248, 185, 185); color: red; padding: 12px">تعبت</span>
+                    </div>
+                  </ng-template>
+                </div>
+                <div class="mt-5">
+                  <div class="heading">
+                    <p class="destination">{{ trajet.depart.split(' ')[1] }}</p>
+                    <p class="line"></p>
+                    <small class="time">{{ trajet.date }}</small>
+                    <p class="line"></p>
+                    <p class="departure">{{ trajet.arrivee.split(' ')[1] }}</p>
+                  </div>
+                  <div class="mt-5">
+                    <div class="progress">
+                      <div class="progress-bar" role="progressbar" [ngStyle]="{ width: progressData[i] + '%' }"
+                        [attr.aria-valuenow]="progressData[i]" aria-valuemin="0" [attr.aria-valuemax]="trajet.nbplaces">
+                      </div>
+                    </div>
+                    <div class="mt-3 d-flex align-items-center justify-content-between">
+                      <div>
+                        <span class="text1">{{ trajet.nbplacesCurrent }} بلايص
+                          <span class="text2"> من {{ trajet.nbplaces }} بلايص </span>
+                        </span>
+                      </div>
+                      <div>
+                        <div *ngIf="isAuth; else passager">
+                          <ng-container *ngIf="getRequestStatus(trajet.id)==-1; else RequestSend">
+                            <button class="btn btn-outline-danger"
+                              [disabled]="isAuth && user?.trajet?.length > 0 || trajet.nbplaces === trajet.nbplacesCurrent"
+                              (click)="ReserverTrajet(trajet.id)">
+                              شوف بلاصة
+                            </button>
+                          </ng-container>
+                          <ng-template #RequestSend>
+                            <button disabled
+                              [class]="'btn btn-outline-' + (RequestsIdStatus[getRequestStatus(trajet.id)].status == '0' ? 'warning' : 'success')"
+                              >
+                              {{ (RequestsIdStatus[getRequestStatus(trajet.id)].status == '0' ? 'إستنى شوية' : 'لبلاصة مريقلة') }}
+                            </button>
+                            <button class="btn btn-danger mx-2"
+                                    (click)="SupprimerDeamnde(trajet.id)"
+                            >
+                                 {{ (RequestsIdStatus[getRequestStatus(trajet.id)].status == '0' ? ' بطلت' : ' باش نخرج') }}
+                          </button>
+                          </ng-template>
+                        </div>
+                        <ng-template #passager>
+                          <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            شكون إنت ساعة 😁
+                          </button>
+                        </ng-template>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+      <div class="text-center d-none d-lg-block col-lg-4 trier_section">
+        <div class="d-flex justify-content-between gap-5">
+          <p class="text_des">تدلل </p>
+          <p class="effacet_tout" (click)="refreshAllFilter()">أفسخ الكل</p>
+        </div>
+        <!-- <div>
+          <div class="d-flex align-items-center justify-content-between gap-5">
+            <mat-radio-group aria-label="Select an option">
+              <mat-radio-button value="أقرب">أقرب وقت لول </mat-radio-button>
+            </mat-radio-group>
+            <div class="label_radio mt-1">
+              <mat-icon>schedule</mat-icon>
+            </div>
+          </div>
+        </div> -->
+        <div class="mt-4">
+          <p class="header_txt">وقتاه تحب تخرج</p>
+          <div class="justify-content-between gap-5">
+            <mat-radio-group aria-labelledby="example-radio-group-label" (change)="init()" [(ngModel)]="date_selected"
+              class="example-radio-group">
+              <mat-radio-button value="before_6">
+                قبل 6:00
+              </mat-radio-button>
+              <mat-radio-button value="6_to_12">
+                6:00 - 12:00
+              </mat-radio-button>
+              <mat-radio-button value="12_to_18">
+                12:00 - 18:00
+              </mat-radio-button>
+              <mat-radio-button value="after_18">
+                بعد 18:00
+              </mat-radio-button>
+            </mat-radio-group>
+          </div>
+        </div>
+        <div class="mt-4">
+          <p class="header_txt">تحب ركبة VIP</p>
+          <div class="mt-2">
+            <div class="d-flex align-items-center justify-content-between gap-5">
+              <mat-checkbox [(ngModel)]="smokingChecked" (click)="init()" class="example-margin">تحب
+                تتكيف</mat-checkbox>
+              <div class="label_radio mt-1">
+                <mat-icon>smoking_rooms</mat-icon>
+              </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-between gap-5">
+              <mat-checkbox [(ngModel)]="chargingChecked" (click)="init()" class="example-margin">تشرجي
+                تلفون</mat-checkbox>
+              <div class="label_radio mt-1">
+                <mat-icon>battery_charging_full</mat-icon>
+              </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-between gap-5">
+              <mat-checkbox [(ngModel)]="petFriendlyChecked" (click)="init()" class="example-margin">معاك حيوان
+                لطيف</mat-checkbox>
+              <div class="label_radio mt-1">
+                <mat-icon>pets</mat-icon>
+              </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-between gap-5">
+              <mat-checkbox [(ngModel)]="vipSeatChecked" (click)="init()" class="example-margin">تحب على
+                كليمتزور</mat-checkbox>
+              <div class="label_radio mt-1">
+                <mat-icon>ac_unit</mat-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="offcanvas offcanvas-top" style="height: 80vh !important" tabindex="-1" id="offcanvasTop"
+  aria-labelledby="offcanvasTopLabel">
+  <div class="offcanvas-header">
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div>
+      <div class="text-center">
+        <h2>تحب تبدل طريقك منا :</h2>
+        <div class="content">
+          <div class=" mt-3 py-3 box_search">
+            <div>
+              <mat-form-field>
+                <mat-label>منين بش تخرج</mat-label>
+                <select matNativeControl (change)="choseDepart($event)">
+                  <optgroup *ngFor="let arr of tab" class="text-danger" [label]="arr.Name">
+                    <option *ngFor="let del of arr.Delegations" class="text-dark" [value]="del.Name">{{ del.Name }}
+                    </option>
+                  </optgroup>
+                </select>
+              </mat-form-field>
+            </div>
+            <div>
+              <mat-form-field>
+                <mat-label>وين ماشي</mat-label>
+                <select matNativeControl (change)="choseDestination($event)">
+                  <optgroup *ngFor="let arr of tab" class="text-danger" [label]="arr.Name">
+                    <option *ngFor="let del of arr.Delegations" class="text-dark" [value]="del.Name">{{ del.Name
+                      }}</option>
+                  </optgroup>
+                </select>
+              </mat-form-field>
+            </div>
+            <div class="input_last datepicker-input">
+              <mat-form-field class="datepicker-input">
+                <mat-label>وقتاش</mat-label>
+                <input matInput [matDatepicker]="picker1" [(ngModel)]="date_chose" class="datepicker-input">
+                <mat-datepicker-toggle matIconSuffix [for]="picker1" class="datepicker-input"></mat-datepicker-toggle>
+                <mat-datepicker #picker1 class="datepicker-input"></mat-datepicker>
+              </mat-form-field>
+            </div>
+            <div class="input_last">
+              <mat-form-field appearance="fill">
+                <mat-label>معاك شكون ولا وحدك</mat-label>
+                <input type="number" matInput placeholder="قداش من واحد" max="4" min="1" [(ngModel)]="Nbr">
+                <mat-icon matSuffix>group</mat-icon>
+              </mat-form-field>
+            </div>
+            <div class="text-center">
+              <button (click)="SearchForTrajet()" mat-fab extended class="bg-danger">
+                لوج على توصيلة
+                <mat-icon>search</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+  <div class="offcanvas-header">
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div class="text-center">
+      <div class="d-flex justify-content-between gap-5">
+        <p class="text_des">تدلل </p>
+        <p class="effacet_tout" (click)="refreshAllFilter()">أفسخ الكل</p>
+      </div>
+      <!-- <div>
+        <div class="d-flex align-items-center justify-content-between gap-5">
+          <mat-radio-group aria-label="Select an option">
+            <mat-radio-button value="أقرب">أقرب وقت لول </mat-radio-button>
+          </mat-radio-group>
+          <div class="label_radio mt-1">
+            <mat-icon>schedule</mat-icon>
+          </div>
+        </div>
+      </div> -->
+      <div class="mt-4">
+        <p class="header_txt">وقتاه تحب تخرج</p>
+        <div class="justify-content-between gap-5">
+          <mat-radio-group aria-labelledby="example-radio-group-label" (change)="init()" [(ngModel)]="date_selected"
+            class="example-radio-group">
+            <mat-radio-button value="before_6">
+              قبل 6:00
+            </mat-radio-button>
+            <mat-radio-button value="6_to_12">
+              6:00 - 12:00
+            </mat-radio-button>
+            <mat-radio-button value="12_to_18">
+              12:00 - 18:00
+            </mat-radio-button>
+            <mat-radio-button value="after_18">
+              بعد 18:00
+            </mat-radio-button>
+          </mat-radio-group>
+        </div>
+      </div>
+      <div class="mt-4">
+        <p class="header_txt">تحب ركبة VIP</p>
+        <div class="mt-2">
+          <div class="d-flex align-items-center justify-content-between gap-5">
+            <mat-checkbox [(ngModel)]="smokingChecked" (change)="init()" class="example-margin">تحب تتكيف</mat-checkbox>
+            <div class="label_radio mt-1">
+              <mat-icon>smoking_rooms</mat-icon>
+            </div>
+          </div>
+          <div class="d-flex align-items-center justify-content-between gap-5">
+            <mat-checkbox [(ngModel)]="chargingChecked" (change)="init()" class="example-margin">تشرجي
+              تلفون</mat-checkbox>
+            <div class="label_radio mt-1">
+              <mat-icon>battery_charging_full</mat-icon>
+            </div>
+          </div>
+          <div class="d-flex align-items-center justify-content-between gap-5">
+            <mat-checkbox [(ngModel)]="petFriendlyChecked" (change)="init()" class="example-margin">معاك حيوان
+              لطيف</mat-checkbox>
+            <div class="label_radio mt-1">
+              <mat-icon>pets</mat-icon>
+            </div>
+          </div>
+          <div class="d-flex align-items-center justify-content-between gap-5">
+            <mat-checkbox [(ngModel)]="vipSeatChecked" (change)="init()" class="example-margin">تحب على
+              كليمتزور</mat-checkbox>
+            <div class="label_radio mt-1">
+              <mat-icon>ac_unit</mat-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title" id="exampleModalLabel">شكون إنت</h5>
+      </div>
+      <div class="modal-body">
+        <div class="text-center container">
+          <input type="text" class="form-control mb-2" placeholder="إسمك" name="name" [(ngModel)]="name">
+          <input type="number" class="form-control mb-2" placeholder="نومروك" name="tlf" [(ngModel)]="tlf">
+          <input type="text" class="form-control mb-2" placeholder="كان تحب تحط بروفيل فيسبوك متاعك"
+            name="profilefacebook" [(ngModel)]="profilefacebook">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">تحب تخرج</button>
+        <button type="button" class="btn btn-primary" (click)="RegisterUser()">متأكد</button>
+      </div>
+    </div>
+  </div>
+</div>

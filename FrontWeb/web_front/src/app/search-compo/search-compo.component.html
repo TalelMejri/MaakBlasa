@@ -1,0 +1,65 @@
+<div data-aos="fade-left">
+  <div class="header mt-5 py-1 ">
+    <div class="line">
+    </div>
+    <div class="text">
+      وين على خير ؟
+    </div>
+    <div class="line">
+    </div>
+  </div>
+  <div class="container d-flex justify-content-center">
+        <div class="shadow-lg rounded p-5 mt-2">
+          <div class="content">
+            <h6 class="text-center">عمر فيسع و شد بلاصتك</h6>
+            <div class=" mt-3 py-3 box_search">
+              <div>
+                <mat-form-field>
+                  <mat-label>منين بش تخرج</mat-label>
+                  <select matNativeControl  (change)="choseDepart($event)">
+                    <optgroup *ngFor="let arr of tab" class="text-danger" [label]="arr.Name"
+                     >
+                      <option *ngFor="let del of arr.Delegations" class="text-dark" [value]="del.Name">{{ del.Name }}
+                      </option>
+                    </optgroup>
+                  </select>
+                </mat-form-field>
+              </div>
+              <div>
+                <mat-form-field>
+                  <mat-label>وين ماشي</mat-label>
+                  <select matNativeControl  (change)="choseDestination($event)">
+                    <optgroup *ngFor="let arr of tab" class="text-danger" [label]="arr.Name"
+                     >
+                      <option *ngFor="let del of arr.Delegations" class="text-dark" [value]="del.Name">{{ del.Name
+                        }}</option>
+                    </optgroup>
+                  </select>
+                </mat-form-field>
+              </div>
+              <div class="input_last">
+                <mat-form-field>
+                  <mat-label>وقتاش</mat-label>
+                  <input matInput [matDatepicker]="picker" readonly [(ngModel)]="date_chose">
+                  <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+              </div>
+              <div class="input_last">
+                <mat-form-field appearance="fill">
+                  <mat-label>معاك شكون ولا وحدك</mat-label>
+                  <input type="number" matInput placeholder="قداش من واحد" max="4" min="1" [(ngModel)]="Nbr">
+                  <mat-icon matSuffix>group</mat-icon>
+                </mat-form-field>
+              </div>
+              <div class="text-center">
+                <button (click)="SearchForTrajet()" mat-fab extended class="bg-danger">
+                  لوج على توصيلة
+                  <mat-icon>search</mat-icon>
+                </button>
+              </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

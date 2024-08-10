@@ -1,0 +1,145 @@
+.line{
+    border:1px solid #818080;
+    width: 20%;
+}
+
+.header{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap:15px;
+  padding: 15px;
+}
+
+.text{
+  font-size: 1.5em;
+  background-color: whitesmoke;
+  border-radius: 25px;
+  padding: 15px;
+  animation: animate 1s infinite;
+}
+
+@keyframes animate {
+  0%{
+    transform: scale(1);
+  }
+  50%{
+    transform: scale(1.1);
+  }
+  100%{
+    transform: scale(1);
+  }
+}
+
+
+.card-big-shadow {
+  display:flex;
+  position: relative;
+}
+
+.coloured-cards .card {
+  margin-top: 30px;
+}
+
+.card[data-radius="none"] {
+  border-radius: 0px;
+}
+
+.card {
+  border-radius: 8px;
+  box-shadow: 0 2px 2px rgba(204, 197, 185, 0.5);
+  background-color: #FFFFFF;
+  color: #252422;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.card.card-just-text .content {
+  padding: 50px 65px;
+}
+
+.content-card{
+  margin-top:30px;
+}
+
+.card[data-color="blue"] {
+  background: whitesmoke;
+  border-radius: 12px;
+}
+
+h6,.text_header {
+font-size: 1.2em;
+text-align: center;
+font-weight: 600;
+text-transform: uppercase;
+}
+
+.input_last{
+margin-right: -19px;
+position: relative;
+}
+
+.time_input{
+   width: 80%;
+   border:none;
+   outline: none;
+   background-color: transparent;
+   padding: 10px;
+   font-size: 18px;
+   border-bottom: 1px solid #000;
+}
+
+.all_radios{
+  line-height: 50px;
+}
+
+.label_radio{
+  font-size: 15px;
+  color: #000;
+  font-weight: 400;
+}
+
+.check{
+  font-size: 18px;
+  text-decoration: underline ;
+  cursor: pointer;
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'Arial', sans-serif;
+  font-size: 16px;
+  direction: rtl;
+}
+
+.heading .line {
+  flex-grow: 1;
+  height: 1px;
+  background-color: black;
+  margin: 0 10px;
+}
+
+.heading .destination,
+.heading .time,
+.heading .departure {
+  margin: 0;
+  padding: 0 10px;
+}
+
+.heading .destination,
+.heading .departure {
+  white-space: nowrap;
+}
+
+.list_demandes{
+  font-size: 15px;
+}
+
+.scroll{
+  max-height:300px;
+  scroll-behavior: smooth;
+  overflow-y: scroll;
+}

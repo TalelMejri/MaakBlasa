@@ -1,0 +1,148 @@
+.samll_card {
+  display: none !important;
+}
+
+.text_des {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.effacet_tout {
+  color: rgb(72, 72, 184);
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.header_txt {
+  font-size: 20px;
+  color: #000;
+  font-weight: 600;
+}
+
+.effacet_tout:hover {
+  color: blue;
+}
+
+.example-radio-group {
+  display: flex;
+  flex-direction: column;
+  margin: 15px 0;
+  align-items: flex-start;
+}
+
+.example-radio-button {
+  margin: 5px;
+}
+
+.section_trier {
+  background-color: whitesmoke;
+}
+
+.c-details span {
+  font-weight: 300;
+  font-size: 18px
+}
+
+.icon {
+  width: 50px;
+  height: 50px;
+  background-color: #eee;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 39px
+}
+
+.badge span {
+  width: 60px;
+  height: 25px;
+  padding-bottom: 3px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center
+}
+
+.progress {
+  height: 10px;
+  border-radius: 10px
+}
+
+.progress div {
+  background-color: red
+}
+
+.text1 {
+  font-size: 14px;
+  font-weight: 600
+}
+
+.text2 {
+  color: #a5aec0
+}
+
+
+.box_card {
+  cursor: pointer;
+}
+
+.box_card.complete {
+  background-color: #f0f0f0;
+  cursor: not-allowed;
+}
+
+.box_card:hover {
+  transform: scale(1.01);
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'Arial', sans-serif;
+  font-size: 16px;
+  direction: rtl;
+}
+
+.heading .line {
+  flex-grow: 1;
+  height: 1px;
+  background-color: black;
+  margin: 0 10px;
+}
+
+.heading .destination,
+.heading .time,
+.heading .departure {
+  margin: 0;
+  padding: 0 10px;
+}
+
+.heading .destination,
+.heading .departure {
+  white-space: nowrap;
+}
+
+
+@media screen and (max-width: 1208px) {
+  .samll_card {
+    display: block !important;
+  }
+
+  .large_card {
+    display: none !important;
+  }
+
+  .trier_section {
+    display: none !important;
+  }
+
+
+
+}
+
+.modal_error{
+  z-index: 99999999999999;
+  position: fixed;
+}
