@@ -14,20 +14,20 @@ class NotifEvent implements ShouldBroadcastNow
 {
     use SerializesModels;
     private $notif;
-    private $tab;
-    public function __construct($notif,$tab)
+    private $userId;
+    public function __construct($notif,$userId)
     {
         $this->notif = $notif;
-        $this->tab=$tab;
+        $this->userId=$userId;
     }
 
     public function broadcastWith()
     {
-        return ['message' => $this->notif,'tab'=>$this->tab];
+        return ['message' => $this->notif,'userId'=>$this->userId];
     }
 
     public function broadcastOn()
     {
-        return new Channel('public');
+        return new PrivateChannel("public.{$this->userId}");
     }
 }

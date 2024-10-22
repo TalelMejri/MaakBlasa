@@ -126,7 +126,9 @@ class TrajetController extends Controller
                 $notif->save();
             }
         }
-        broadcast(new NotifEvent("الله غالب الثنية إلي حبيت علاها تفسخت", $tab));
+        foreach ($tab as $userId) {
+            broadcast(new NotifEvent("الله غالب الثنية إلي حبيت علاها تفسخت", $userId));
+        }
         return response()->json('trajet deleted');
     }
 
@@ -201,7 +203,8 @@ class TrajetController extends Controller
         $notif->content = "عندك شكون إحب يطلع معاك";
         $notif->save();
 
-        broadcast(new NotifEvent("عندك شكون إحب يطلع معاك ", $tab));
+        broadcast(new NotifEvent("عندك شكون إحب يطلع معاك ", $trajet->user_id));
+        
         return response()->json(["data" => $demande], 201);
     }
 
@@ -276,7 +279,9 @@ class TrajetController extends Controller
             $notif->user_id = $request->user_id;
             $notif->content = "فيها خير مقبلكش في الطريق متاعو";
             $notif->save();
-            broadcast(new NotifEvent("فيها خير مقبلكش في الطريق متاعو", $tab));
+            foreach ($tab as $userId) {
+                broadcast(new NotifEvent("فيها خير مقبلكش في الطريق متاعو", $userId));
+            }
             return response()->json(["data" => "User Rejected"], 200);
         } else {
             return response()->json(["data" => "Not Found"], 404);
@@ -306,7 +311,9 @@ class TrajetController extends Controller
             $notif->user_id = $trajet->user_id;
             $notif->content = "فما شكون خرج";
             $notif->save();
-            broadcast(new NotifEvent("فما شكون خرج", $tab));
+            foreach ($tab as $userId) {
+                broadcast(new NotifEvent("فما شكون خرج", $trajet->user_id));
+            }
             return response()->json(["data" =>  $requestUser], 200);
         } else {
             return response()->json(["data" =>  "Not Found"], 404);

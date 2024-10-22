@@ -15,28 +15,30 @@ export class AppComponent implements OnInit {
   isAuth: boolean = false;
 
   constructor(private MatSnackBar: MatSnackBar, private AuthserviceService: AuthserviceService, private trajetService: TrajetServiceService) { }
-  user: any;
+  user: any=[];
 
   getUser() {
-    if (localStorage.getItem('token') == null) {
-      return;
+    const token = localStorage.getItem('token');
+    if (token == null) {
+        return;
     }
     this.AuthserviceService.getProfile().subscribe((res: any) => {
-      this.isAuth = true;
-      this.user = res[0];
-      if (this.user.welcome == '0') {
-        let test = new SpeechSynthesisUtterance("welcome " + this.user.name);
-        speechSynthesis.speak(test);
-        setTimeout(() => {
-          this.AuthserviceService.UdpateWelcome().subscribe((res) => {
-            this.getUser();
-          })
-        }, 1000)
-      }
+        this.isAuth = true;
+        this.user = res[0];
+        if (this.user.welcome === '0') {
+            let test = new SpeechSynthesisUtterance("welcome " + this.user.name);
+            speechSynthesis.speak(test);
+            setTimeout(() => {
+                // this.AuthserviceService.UpdateWelcome().subscribe(() => {
+                //     this.getUser(); // Refresh user data after updating welcome
+                // });
+            }, 1000);
+        }
     }, (err: any) => {
-      this.isAuth = false;
-    })
-  }
+        this.isAuth = false;
+        console.error('Error fetching user profile:', err);
+    });
+}
 
   DeleteAllNotif() {
     this.trajetService.DeleteAllNotif().subscribe((res: any) => {
@@ -45,8 +47,9 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getUser();
     if (typeof window !== 'undefined') {
-      this.getUser();
+      
       this.isAuth = localStorage.getItem("token") ? true : false;
 
       const echo = new Echo({
@@ -70,22 +73,22 @@ export class AppComponent implements OnInit {
             });
           }
         );
-
-        echo.channel('public').listen('NotifEvent', (res: any) => {
-          //console.log(res);
-          if (res.tab.length > 0) {
-            if (res.tab.find((val: any) => val.id == this.user.id)) {
-              this.MatSnackBar.open(res.message, 'باهي', {}).onAction().subscribe(() => {
-                this.DeleteAllNotif();
-              });
-            }
-          } else {
-            if (res.tab.id == this.user.id) {
-              this.MatSnackBar.open(res.message, 'باهي', {}).onAction().subscribe(() => {
-                this.DeleteAllNotif();
-              });
-            }
-          }
+        
+        echo.private(`public.${this.user.id}`).listen('App\Events\NotifEvent', (res: any) => {
+          this.MatSnackBar.open(res.message, 'باهي', {}).onAction().subscribe(() => {
+            this.DeleteAllNotif();
+          });
+          // if (res.tab.length > 0) {
+          //   if (res.tab.find((val: any) => val.id == this.user.id)) {
+             
+          //   }
+          // } else {
+          //   if (res.tab.id == this.user.id) {
+          //     this.MatSnackBar.open(res.message, 'باهي', {}).onAction().subscribe(() => {
+          //       this.DeleteAllNotif();
+          //     });
+          //   }
+          // }
         });
       }
 

@@ -2,15 +2,15 @@
   position: absolute;
   left: 0;
   margin-bottom: 15px;
-  animation: animate 20s infinite;
+  animation: animate 10s infinite;
 }
 
 @keyframes animate {
   0% {
-    left: 0;
+    right: 100%;
   }
   100% {
-    left: 100%;
+    right: 0%;
   }
 }
 
